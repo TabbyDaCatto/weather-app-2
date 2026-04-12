@@ -1,3 +1,4 @@
+
 // Firebase Authentication + Firestore
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { 
@@ -15,22 +16,21 @@ import {
   updateDoc 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-//Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyC2efvQ6tmMwWaXuwxxb9Dzn5acKTOXWm0",
-  authDomain: "weatherapp-11faa.firebaseapp.com",
-  projectId: "weatherapp-11faa",
-  storageBucket: "weatherapp-11faa.appspot.com",
-  messagingSenderId: "360480906515",
-  appId: "1:360480906515:web:97b6dbfc4663b30783cee6"
+  apiKey: "AIzaSyA5ApbauNZZnw6pOWoHajlj6TOHoRVJr_0",
+  authDomain: "firebasics2705.firebaseapp.com",
+  databaseURL: "https://firebasics2705-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "firebasics2705",
+  storageBucket: "firebasics2705.firebasestorage.app",
+  messagingSenderId: "939715509059",
+  appId: "1:939715509059:web:487d7a2ae4d34154ebcdf6",
+  measurementId: "G-T4WVGCGCX4"
 };
 
-//Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-//Elements
 const authModal = document.getElementById("authModal");
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
@@ -50,10 +50,8 @@ const favoriteSelect = document.getElementById("favoriteSelect");
 
 let isSignUp = false;
 let favoriteCities = [];
-let searchHistory = [];
 let currCity = ""; 
 
-//SHOW/HIDE MODAL
 loginBtn.addEventListener("click", () => {
   authModal.style.display = "flex";
   isSignUp = false;
@@ -75,7 +73,6 @@ window.addEventListener("click", (event) => {
   if (event.target === authModal) authModal.style.display = "none";
 });
 
-//SIGN UP / LOGIN
 authSubmit.addEventListener("click", async () => {
   const email = authEmail.value.trim();
   const password = authPassword.value.trim();
@@ -97,22 +94,20 @@ authSubmit.addEventListener("click", async () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Save user info in Firestore
       await setDoc(doc(db, "users", user.uid), {
         username: username,
         email: email,
         favoriteCities: [],
-        searchHistory: [],
         loginTime: new Date().toISOString(),
+        location: null
       });
 
-      alert("Account created successfully!");
+      alert("🎉 Account created successfully!");
       authModal.style.display = "none";
     } catch (error) {
       alert(error.message);
     }
   } else {
-    // LOGIN
     if (!email || !password) {
       alert("Please enter your email and password.");
       return;
@@ -122,20 +117,18 @@ authSubmit.addEventListener("click", async () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Update login time
       await updateDoc(doc(db, "users", user.uid), {
         loginTime: new Date().toISOString()
       });
 
       authModal.style.display = "none";
-      alert("Logged in successfully!");
+      alert("✅ Logged in successfully!");
     } catch (error) {
       alert(error.message);
     }
   }
 });
 
-//AUTH STATE CHANGE
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     loginBtn.style.display = "none";
@@ -149,7 +142,6 @@ onAuthStateChanged(auth, async (user) => {
       const data = docSnap.data();
       userName.textContent = data.username || user.email;
 
-      // Load favorites from Firestore
       favoriteCities = data.favoriteCities || [];
       updateFavoriteDropdown();
     } else {
@@ -161,119 +153,53 @@ onAuthStateChanged(auth, async (user) => {
     signupBtn.style.display = "inline-block";
     userInfo.classList.add("hidden");
 
-    // Load favorites from localStorage for guests
     favoriteCities = JSON.parse(localStorage.getItem("favoriteCities")) || [];
     updateFavoriteDropdown();
   }
 });
 
-//ADD/REMOVE FAVORITE
 addFavoriteBtn.addEventListener("click", async () => {
-  // Take the exact city string from the suggestion (or main screen)
-  const cityOnScreen = document.querySelector(".weather__city span").textContent.trim();
-  if (!cityOnScreen) return;
+  if (!currCity) return;
 
-  // Toggle favorite
-  if (favoriteCities.includes(cityOnScreen)) {
-    favoriteCities = favoriteCities.filter(c => c !== cityOnScreen);
+  if (!favoriteCities.includes(currCity)) {
+    favoriteCities.push(currCity);
   } else {
-    favoriteCities.push(cityOnScreen);
+    favoriteCities = favoriteCities.filter(c => c !== currCity);
   }
 
-  // Save locally
   localStorage.setItem("favoriteCities", JSON.stringify(favoriteCities));
 
-  // Save to Firestore if logged in
   const user = auth.currentUser;
   if (user) {
     try {
-      await updateDoc(doc(db, "users", user.uid), { favoriteCities });
+      await updateDoc(doc(db, "users", user.uid), {
+        favoriteCities: favoriteCities
+      });
     } catch (err) {
       console.error("Error updating favorites in Firestore:", err);
     }
   }
 
   updateFavoriteDropdown();
-  updateFavoriteButton();
 });
 
-//UPDATE FAVORITE DROPDOWN
+favoriteSelect.addEventListener("change", (e) => {
+  if (e.target.value) {
+    currCity = e.target.value;
+    getWeather();
+  }
+});
+
 function updateFavoriteDropdown() {
   favoriteSelect.innerHTML = `<option value="">⭐ Favorite Cities</option>`;
-  favoriteCities.forEach(city => {
+  favoriteCities.forEach((c) => {
     const option = document.createElement("option");
-    option.value = city; // save full suggestion string
-    option.textContent = city;
+    option.value = c;
+    option.textContent = c;
     favoriteSelect.appendChild(option);
   });
-
-  if (currCity && favoriteCities.includes(currCity)) {
-    favoriteSelect.value = currCity;
-  }
 }
 
-//UPDATE STAR BUTTON VISUAL
-function updateFavoriteButton() {
-  if (!currCity) {
-    addFavoriteBtn.textContent = "☆";
-    return;
-  }
-  addFavoriteBtn.textContent = favoriteCities.includes(currCity) ? "★" : "☆";
-}
-
-//FAVORITE DROPDOWN CHANGE
-favoriteSelect.addEventListener("change", async (e) => {
-  const selectedCity = e.target.value;
-  if (!selectedCity) return;
-
-  currCity = selectedCity;
-  updateFavoriteButton();
-
-  try {
-    // Use the full suggestion name to get coordinates
-    const geoRes = await fetch(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(selectedCity)}&limit=1&appid=${API_KEYS.openweather}`
-    );
-    const geoData = await geoRes.json();
-    if (!geoData || geoData.length === 0) {
-      alert("City not found!");
-      return;
-    }
-
-    const { lat, lon } = geoData[0];
-
-    // Fetch weather by coordinates
-    await getWeatherByCoords(lat, lon, selectedCity);
-
-  } catch (err) {
-    console.error("Error loading favorite city:", err);
-    alert("Failed to load weather for " + selectedCity);
-  }
-});
-
-//LOAD FAVORITES ON LOGIN/START
-async function loadFavorites() {
-  const user = auth.currentUser;
-  if (user) {
-    try {
-      const docSnap = await getDoc(doc(db, "users", user.uid));
-      favoriteCities = docSnap.exists() ? docSnap.data().favoriteCities || [] : [];
-    } catch {
-      favoriteCities = [];
-    }
-  } else {
-    favoriteCities = JSON.parse(localStorage.getItem("favoriteCities")) || [];
-  }
-
-  updateFavoriteDropdown();
-  updateFavoriteButton();
-}
-
-
-//INIT
-onAuthStateChanged(auth, () => loadFavorites());
-window.addEventListener("DOMContentLoaded", () => loadFavorites());
-//LOGOUT
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   alert("👋 Logged out successfully!");
