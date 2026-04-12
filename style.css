@@ -27,7 +27,6 @@ body {
     align-items: center;
 }
 
-/* General input styling */
 input {
     border: none;
     background: rgba(30, 30, 30, 0.6);
@@ -42,7 +41,7 @@ input::placeholder {
     color: #fff;
 }
 
-/* Search area */
+
 .weather__search {
     position: relative;
 }
@@ -55,7 +54,7 @@ input::placeholder {
     color: #fff;
 }
 
-/* Units toggle */
+
 .weather__units {
     font-size: 1.5rem;
     color: #fff;
@@ -69,14 +68,14 @@ input::placeholder {
     margin-right: 0.5rem;
 }
 
-/* Main weather info */
+
 .weather__body {
     text-align: center;
     margin-top: 3rem;
     color: #fff; /* ensures all text is white */
 }
 
-/* Translucent info container */
+
 .weather__info {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -90,7 +89,7 @@ input::placeholder {
     color: #fff;
 }
 
-/* Individual cards */
+
 .weather__card {
     display: flex;
     align-items: center;
@@ -117,7 +116,7 @@ input::placeholder {
     color: #fff;
 }
 
-/* Forecast bubble */
+
 .weather__forecast {
     background: rgba(0, 0, 0, 0.5);
     display: inline-block;
@@ -126,7 +125,7 @@ input::placeholder {
     color: #fff;
 }
 
-/* Temperature and date */
+
 .weather__temperature {
     font-size: 1.75rem;
     color: #fff;
@@ -138,7 +137,7 @@ input::placeholder {
     color: #fff;
 }
 
-/* Responsive tweaks */
+
 @media(max-width: 936px){
     .container {
         width: 90%;
@@ -158,28 +157,28 @@ input::placeholder {
         grid-template-columns: none;
     }
 }
-/* ===== Toolbar ===== */
+
 .toolbar {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(30, 30, 30, 0.7); /* translucent background */
+    background: rgba(30, 30, 30, 0.7); 
     backdrop-filter: blur(10px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 2rem;
-    z-index: 1000; /* ensures it stays on top */
+    z-index: 1000; 
     color: #fff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 .toolbar__right {
-    display: flex;          /* arrange children in a row */
-    align-items: center;    /* vertically center C/F and buttons */
-    gap: 1rem;              /* spacing between units and auth buttons */
+    display: flex;          
+    align-items: center;    
+    gap: 1rem;              
 }
-/* ===== LOGO ===== */
+
 .toolbar__logo {
     display: flex;
     align-items: center;
@@ -194,7 +193,7 @@ input::placeholder {
     color: #ffd85c;
 }
 
-/* ===== NAVIGATION BUTTONS ===== */
+
 .toolbar__nav {
     display: flex;
     gap: 1.5rem;
@@ -215,7 +214,7 @@ input::placeholder {
     transform: translateY(-1px);
 }
 
-/* ===== AUTH BUTTONS ===== */
+
 .toolbar__auth {
     display: flex;
     gap: 1rem;
@@ -248,7 +247,7 @@ input::placeholder {
 }
 
 .container {
-    margin-top: 90px; /* prevents weather app from hiding under toolbar */
+    margin-top: 90px;
 }
 .search-suggestions {
     position: absolute;
@@ -367,35 +366,4 @@ input::placeholder {
 
 .toolbar__fav-btn i {
   font-size: 14px;
-}
-.toolbar__history-container {
-  position: relative;
-  display: inline-block;
-}
-
-.history-dropdown {
-  position: absolute;
-  top: 40px;
-  left: 0;
-  background-color: white;
-  border: 1px solid #ccc;
-  width: 200px;
-  max-height: 250px;
-  overflow-y: auto;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  z-index: 100;
-}
-
-.history-dropdown p {
-  padding: 8px 12px;
-  margin: 0;
-  cursor: pointer;
-}
-
-.history-dropdown p:hover {
-  background-color: #f0f0f0;
-}
-
-.hidden {
-  display: none;
 }
