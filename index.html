@@ -7,17 +7,14 @@
   <title>Weather App</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
 
-  <!--TOOLBAR-->
+<body>
   <header class="toolbar">
-    <!--Logo-->
     <div class="toolbar__logo">
       <i class="fa-solid fa-cloud-sun"></i>
       <span>WeatherApp</span>
     </div>
 
-    <!-- Search Bar -->
     <div class="toolbar__search-container">
       <form class="weather__search" autocomplete="off">
         <input 
@@ -31,11 +28,12 @@
       </form>
     </div>
 
-    <!-- Navigation buttons -->
-<nav class="toolbar__nav">
-</nav>
+    <nav class="toolbar__nav">
+      <button class="toolbar__btn" id="hourlyBtn">Hourly</button>
+      <button class="toolbar__btn" id="dailyBtn">Daily</button>
+      <button class="toolbar__btn" id="radarBtn">Radar Map</button>
+    </nav>
 
-    <!-- Favorite city selector -->
       <div class="toolbar__favorites">
     <select id="favoriteSelect">
       <option value="">Favorite Cities</option>
@@ -44,28 +42,17 @@
       <i class="fa-solid fa-star"></i> Add Favorite
     </button>
   </div>
-  <!-- History dropdown -->
-  <select id="historySelect">
-    <option value="">🕒 Search History</option>
-  </select>
-  <button class="toolbar__fav-btn" id="clearHistoryBtn" title="Clear search history">
-    <i class="fa-solid fa-trash"></i> Clear History
-  </button>
-</div>
-    <!-- Right group: Units + Auth -->
+
     <div class="toolbar__right">
       <div class="weather__units">
         <span class="weather_unit_celsius">&#176C</span>
         <span class="weather_unit_farenheit">&#176F</span>
       </div>
 
-      <!--Auth Section -->
     <div class="toolbar__auth">
-      <!-- Before login -->
       <button class="toolbar__auth-btn" id="loginBtn">Log In</button>
       <button class="toolbar__auth-btn signup" id="signupBtn">Sign Up</button>
 
-      <!-- After login -->
       <div id="userInfo" class="hidden">
         <span id="welcomeMsg"></span>
         <strong id="userName"></strong>
@@ -74,7 +61,6 @@
     </div>
   </header>
 
-  <!--MAIN WEATHER CONTAINER-->
   <div class="container">
     <div class="weather__body">
       <h1 class="weather__city">
@@ -95,7 +81,6 @@
       </div>
     </div>
 
-    <!--WEATHER DETAIL-->
     <div class="weather__info">
       <div class="weather__card">
         <i class="fa-solid fa-temperature-full"></i>
@@ -147,13 +132,11 @@
     </div>
   </div>
 
-  <!--AUTHENTICATION MODAL-->
   <div id="authModal" class="auth-modal" style="display: none;">
     <div class="auth-box">
       <button class="close-btn" id="closeAuth">&times;</button>
       <h2 id="authTitle">Log In</h2>
 
-      <!--USERNAME-->
       <input type="text" id="authUsername" placeholder="Username" style="display: none;" />
 
       <input type="email" id="authEmail" placeholder="Email" />
@@ -164,7 +147,6 @@
     </div>
   </div>
 
-  <!--SCRIPTS-->
   <script type="module" src="authentic.js"></script>
   <script src="script.js" crossorigin="anonymous"></script>
 
