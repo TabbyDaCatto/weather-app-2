@@ -1,0 +1,195 @@
+<!DOCTYPE html> 
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <title>Weather App</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <header class="toolbar">
+    
+    <div class="toolbar__logo">
+      <i class="fa-solid fa-cloud-sun"></i>
+      <span>WeatherApp</span>
+    </div>
+
+    <div class="toolbar__search-container">
+      <form class="weather__search" autocomplete="off">
+        <input type="text" placeholder="Search city..." class="weather__searchform" id="citySearch"/>
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </form>
+    </div>
+
+    <nav class="toolbar__nav">
+      <button class="toolbar__btn" id="openRuleBuilderBtn" style="color: #ffd85c;">
+        <i class="fa-solid fa-plus"></i> Build Alert
+      </button>
+    </nav>
+
+    <div class="toolbar__right">
+      <div class="toolbar__auth">
+        <button class="toolbar__auth-btn" id="loginBtn">Log In</button>
+        <button class="toolbar__auth-btn signup" id="signupBtn">Sign Up</button>
+
+        <div id="userInfo" class="hidden">
+          <span id="welcomeMsg"></span>
+          <strong id="userName"></strong>
+          <button class="toolbar__auth-btn" id="logoutBtn">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="alertBox" class="weather__alert-container" style="display: none;">
+      <div class="alert-content">
+        <span id="alertMessage"></span>
+      </div>
+    </div>
+
+    <div class="weather__body">
+      <h1 class="weather__city"></h1>
+
+      <div class="weather__datetime"></div>
+      <div class="weather__forecast"></div>
+      <div class="weather__icon"></div>
+      <p class="weather__temperature"></p>
+
+      <div class="weather__minmax">
+        <p>Min: --&#176;</p>
+        <p>Max: --&#176;</p>
+      </div>
+    </div>
+
+    <div class="weather__info">
+      <div class="weather__card">
+        <i class="fa-solid fa-temperature-full"></i>
+        <div>
+          <p>Real Feel</p>
+          <p class="weather__realfeel">--&#176;</p>
+        </div>
+      </div>
+
+      <div class="weather__card">
+        <i class="fa-solid fa-droplet"></i>
+        <div>
+          <p>Humidity</p>
+          <p class="weather__humidity">--%</p>
+        </div>
+      </div>
+
+      <div class="weather__card">
+        <i class="fa-solid fa-wind"></i>
+        <div>
+          <p>Wind</p>
+          <p class="weather__wind">-- m/s</p>
+        </div>
+      </div> 
+
+      <div class="weather__card">
+        <i class="fa-solid fa-cloud-rain"></i>
+        <div>
+          <p>Precipitation</p>
+          <p class="weather__precip">0 mm</p>
+        </div>
+      </div>
+
+      <div id="suitabilityScores" class="weather__card" style="grid-column: 1 / -1; display: none; flex-direction: column; align-items: flex-start; padding: 1.5rem;">
+        <h3 style="margin-bottom: 15px; font-size: 1.1rem; color: #ffd85c;">
+          <i class="fa-solid fa-bullseye"></i> Activity Suitability
+        </h3>
+        <div id="scoreList" style="width: 100%;"></div>
+      </div>
+    </div>
+
+    <div class="forecast-container" id="forecastContainer" style="display: none;" >
+      <h2 style="color: white; margin-bottom: 10px; font-size: 1.2rem;">5-Day Forecast</h2>
+      <div class="forecast-cards" id="forecastCards"></div>
+    </div>
+  </div>
+
+  <div id="authModal" class="auth-modal" style="display: none;">
+    <div class="auth-box">
+      <button class="close-btn" id="closeAuth">&times;</button>
+      <h2 id="authTitle">Log In</h2>
+
+      <input type="text" id="authUsername" placeholder="Username" style="display: none;" />
+      <input type="email" id="authEmail" placeholder="Email" />
+      <input type="password" id="authPassword" placeholder="Password" />
+      <input type="password" id="authRepeatPassword" placeholder="Repeat Password" style="display: none;" />
+
+      <button id="authSubmit">Submit</button>
+    </div>
+  </div>
+
+  <div id="ruleModal" class="auth-modal" style="display: none;">
+    <div class="auth-box" style="width: 420px; color: #333;">
+      <button class="close-btn" id="closeRuleModal">&times;</button>
+      <h2 style="font-size: 1.3rem; margin-bottom: 8px;">Create Custom Alert</h2>
+      
+      <label style="font-size: 12px; font-weight: bold;">Alert Name</label>
+      <input type="text" id="policyName" placeholder="e.g., High Wind Warning" style="width:100%; margin-bottom: 10px;" />
+      
+      <label style="font-size: 12px; font-weight: bold;">Trigger Match Type</label>
+      <select id="matchType" style="width: 100%; padding: 5px; margin-bottom: 10px; border-radius: 4px;">
+        <option value="ALL">Match ALL conditions (AND)</option>
+        <option value="ANY">Match ANY condition (OR)</option>
+      </select>
+
+      <!-- Condition 1 -->
+      <fieldset style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px;">
+        <legend style="font-size: 11px; padding: 0 5px; font-weight: bold;">Condition 1</legend>
+        <div style="display: flex; gap: 5px;">
+          <select id="ruleMetric1" style="flex: 2; padding: 5px;">
+            <option value="temp">Temperature</option>
+            <option value="temp_min">Min Temp</option>
+            <option value="humidity">Humidity</option>
+            <option value="wind">Wind Speed</option>
+            <option value="precip">Rain Volume</option>
+          </select>
+          <select id="ruleOperator1" style="flex: 1; padding: 5px;">
+            <option value=">">&gt;</option>
+            <option value="<">&lt;</option>
+            <option value="==">==</option>
+          </select>
+          <input type="number" id="ruleValue1" placeholder="Val" style="flex: 1; padding: 5px;" />
+        </div>
+      </fieldset>
+
+      <!-- Condition 2 -->
+      <fieldset style="border: 1px solid #ccc; padding: 10px; border-radius: 6px;">
+        <legend style="font-size: 11px; padding: 0 5px; font-weight: bold;">Condition 2</legend>
+        <div style="display: flex; gap: 5px;">
+          <select id="ruleMetric2" style="flex: 2; padding: 5px;">
+            <option value="precip">Rain Volume</option>
+            <option value="wind">Wind Speed</option>
+            <option value="temp">Temperature</option>
+            <option value="humidity">Humidity</option>
+          </select>
+          <select id="ruleOperator2" style="flex: 1; padding: 5px;">
+            <option value=">">&gt;</option>
+            <option value="<">&lt;</option>
+            <option value="==">==</option>
+          </select>
+          <input type="number" id="ruleValue2" placeholder="Val" style="flex: 1; padding: 5px;" />
+        </div>
+      </fieldset>
+      
+      <button id="savePolicyBtn" style="background: #28a745; margin-top: 15px; color: white; padding: 10px; font-weight: bold; border-radius: 6px;">
+        Save Alert Config
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="authentication.js"></script>
+  <script type="module" src="index.js"></script>
+</body>
+
+</html>
