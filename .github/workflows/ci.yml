@@ -1,23 +1,36 @@
-name: Weather App Automation Check
+name: Deploy Weather App to GitHub Pages
 
-# 1. Trigger the workflow every time someone pushes code changes
 on:
   push:
     branches: [ main ]
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
-  quality-check:
-    # 2. Tell GitHub to give you a clean virtual machine to test on
+  # 1. THE CI JOB (Check the files)
+  build:
     runs-on: ubuntu-latest
-
     steps:
-    # Step A: Copy your repository files into the test runner machine
-    - name: Checkout project code
-      uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    # Step B: Provide a quick test message confirming your system is ready
-    - name: Run Basic Build Verification
-      run: |
-        echo "Successfully verified project files!"
-        echo "Target file check: index.html and script.js are present."
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.' # Uploads your entire repository folder
 
+  # 2. THE CD JOB (Deploy the website live)
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
