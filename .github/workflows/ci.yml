@@ -10,7 +10,6 @@ permissions:
   id-token: write
 
 jobs:
-  # 1. THE CI JOB: Install Node and run your Jest tests
   build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -25,16 +24,21 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # This will run Jest directly in the cloud!
       - name: Run automated tests
         run: npm test
+
+      # NEW STEP: Swap out the placeholder for the real key in the cloud!
+      - name: Inject Live API Key Secret
+        run: |
+          sed -i 's/YOUR_SECRET_API_KEY_PLACEHOLDER/${{ secrets.OPENWEATHER_API_KEY }}/g' script.js
+        # (Note: If your API_KEYS object lives in a different file than script.js, 
+        # replace 'script.js' above with your correct file name path!)
 
       - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
-  # 2. THE CD JOB: Automatically deploy ONLY if tests pass
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
