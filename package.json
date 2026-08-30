@@ -1,0 +1,25 @@
+{
+  "devDependencies": {
+    "jest": "^30.5.0"
+  },
+  "name": "weather-app-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TabbyDaCatto/weather-app-2.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/TabbyDaCatto/weather-app-2/issues"
+  },
+  "homepage": "https://github.com/TabbyDaCatto/weather-app-2#readme"
+}
