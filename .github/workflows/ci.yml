@@ -1,31 +1,42 @@
-name: Deploy Weather App to GitHub Pages
+name: Deploy Weather App to GitHub Pages with Tests
 
 on:
   push:
     branches: [ main ]
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  # 1. THE CI JOB (Check the files)
-  build:
+  # 1. THE CI JOB: Install Node and run your Jest tests
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Upload artifact
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      # This will run Jest directly in the cloud!
+      - name: Run automated tests
+        run: npm test
+
+      - name: Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.' # Uploads your entire repository folder
+          path: '.'
 
-  # 2. THE CD JOB (Deploy the website live)
+  # 2. THE CD JOB: Automatically deploy ONLY if tests pass
   deploy:
-    needs: build
+    needs: build-and-test
     runs-on: ubuntu-latest
     environment:
       name: github-pages
