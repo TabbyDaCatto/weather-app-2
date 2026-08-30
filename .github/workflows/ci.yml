@@ -30,7 +30,7 @@ jobs:
       # NEW STEP: Swap out the placeholder for the real key in the cloud!
       - name: Inject Live API Key Secret
         run: |
-          sed -i 's/YOUR_SECRET_API_KEY_PLACEHOLDER/${{ secrets.OPENWEATHER_API_KEY }}/g' script.js
+          sed -i 's/SECRET_API_KEY_PLACEHOLDER/${{ secrets.OPENWEATHER_API_KEY }}/g' api.js
         # (Note: If your API_KEYS object lives in a different file than script.js, 
         # replace 'script.js' above with your correct file name path!)
 
