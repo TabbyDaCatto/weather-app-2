@@ -1,6 +1,6 @@
 //hide ts
 const API_KEYS = {
-  openweather: "SECRET_API_KEY_PLACEHOLDER", 
+  openweather: "64f60853740a1ee3ba20d0fb595c97d5", 
 };
 
 async function fetchAPI(endpoint, params, units) {
