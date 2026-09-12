@@ -1,6 +1,18 @@
 //hide ts
+let LOCAL_KEY = null;
+
+try {
+  // Dynamically import the local config file
+  const config = await import("./config.js");
+  LOCAL_KEY = config.API_KEY;
+} catch (err) {
+  // Silently fail if config.js is missing (e.g., on GitHub)
+  console.log("Local config not found, falling back to placeholder.");
+}
+
 const API_KEYS = {
-  openweather: "64f60853740a1ee3ba20d0fb595c97d5", 
+  // Use the real key locally, or the placeholder when pushed online
+  openweather: LOCAL_KEY || "SECRET_API_KEY_PLACEHOLDER", 
 };
 
 async function fetchAPI(endpoint, params, units) {
