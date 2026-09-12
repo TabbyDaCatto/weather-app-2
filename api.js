@@ -14,7 +14,6 @@ async function fetchAPI(endpoint, params, units) {
   }
 }
 
-
 export async function getWeather(city, units) {
   return await fetchAPI("weather", { q: city }, units);
 }
