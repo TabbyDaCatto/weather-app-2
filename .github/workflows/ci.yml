@@ -18,7 +18,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name:: Inject API Key
+      - name: Inject API Key
         run: echo 'export const API_KEY = "${{ secrets.OPENWEATHER_API_KEY}}";' > config.js
 
       - name: Upload artifact
