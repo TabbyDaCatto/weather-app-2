@@ -2,6 +2,8 @@ import { getWeather, getWeatherByCoords, getForecast, getForecastByCoords } from
 import { renderWeather, renderForecast } from "./ui.js";
 import { evaluateAlertPolicies, initAlertBuilder } from "./logic_1.js";
 import { evaluateScoringPolicies } from "./logic_2.js";
+import { renderBestTimeWindows } from "./logic_3.js";
+
 
 const state = {
   currCity: "Messina",
@@ -39,24 +41,26 @@ async function updateAllData(fetchWeatherFn, fetchForecastFn) {
     fetchForecastFn()
   ]);
   if (weatherData) processWeatherData(weatherData);
-  if (forecastData) renderForecast(forecastData.list);
+  
+  if (forecastData && forecastData.list){
+    renderForecast(forecastData.list);
+    renderBestTimeWindows(forecastData.list);
+  }
 }
 
-window.addEventListener("load", () => {
-  initAlertBuilder(() => state.latestWeather);
+initAlertBuilder(() => state.latestWeather);
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => updateAllData(
-        () => getWeatherByCoords(pos.coords.latitude, pos.coords.longitude, state.units),
-        () => getForecastByCoords(pos.coords.latitude, pos.coords.longitude, state.units)
-      ),
-      () => updateAllData(() => getWeather(state.currCity, state.units), () => getForecast(state.currCity, state.units))
-    );
-  } else {
-    updateAllData(() => getWeather(state.currCity, state.units), () => getForecast(state.currCity, state.units));
-  }
-});
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(
+    (pos) => updateAllData(
+      () => getWeatherByCoords(pos.coords.latitude, pos.coords.longitude, state.units),
+      () => getForecastByCoords(pos.coords.latitude, pos.coords.longitude, state.units)
+    ),
+    () => updateAllData(() => getWeather(state.currCity, state.units), () => getForecast(state.currCity, state.units))
+  );
+} else {
+  updateAllData(() => getWeather(state.currCity, state.units), () => getForecast(state.currCity, state.units));
+}
 
 document.querySelector(".weather__search").addEventListener("submit", (e) => {
   e.preventDefault();

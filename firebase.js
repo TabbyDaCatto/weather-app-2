@@ -1,5 +1,6 @@
 // Firebase Authentication + Firestore
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
 import { 
   getAuth, 
   createUserWithEmailAndPassword, 
@@ -7,6 +8,7 @@ import {
   signOut, 
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
 import { 
   getFirestore, 
   doc, 
@@ -128,14 +130,19 @@ onAuthStateChanged(auth, async (user) => {
     signupBtn.style.display = "none";
     userInfo.classList.remove("hidden");
 
-    const docRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(docRef);
+    // 1. Instantly display the email as a fallback
+    userName.textContent = user.email;
 
-    if (docSnap.exists()) {
-      const data = docSnap.data();
-      userName.textContent = data.username || user.email;
-    } else {
-      userName.textContent = user.email;
+    // 2. Safely attempt to fetch the custom username from Firestore
+    try {
+      const docRef = doc(db, "users", user.uid);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists() && docSnap.data().username) {
+        userName.textContent = docSnap.data().username;
+      }
+    } catch (error) {
+      console.error("Firestore Error:", error.message);
     }
   } else {
     loginBtn.style.display = "inline-block";

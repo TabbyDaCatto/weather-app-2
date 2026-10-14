@@ -1,7 +1,20 @@
-let userScoringPolicies = JSON.parse(localStorage.getItem("scoringPolicies")) || [
+export let userScoringPolicies = JSON.parse(localStorage.getItem("scoringPolicies")) || [
   { id: "score-1", name: "🚁 Drone Flying", criteria: [{ metric: "wind", ideal: 2, tolerance: 5, weight: 0.6 }, { metric: "precip", ideal: 0, tolerance: 1, weight: 0.3 }, { metric: "temp", ideal: 22, tolerance: 10, weight: 0.1 }] },
   { id: "score-2", name: "🏃 Outdoor Running", criteria: [{ metric: "temp", ideal: 18, tolerance: 10, weight: 0.5 }, { metric: "humidity", ideal: 40, tolerance: 40, weight: 0.3 }, { metric: "precip", ideal: 0, tolerance: 2, weight: 0.2 }] }
 ];
+
+// NEW: Pure function extracted so logic_3 can reuse it
+export function calculateSuitabilityScore(weatherData, criteria) {
+  let totalScore = 0, totalWeight = 0;
+  criteria.forEach(crit => {
+    if (weatherData[crit.metric] !== undefined) {
+      let metricScore = Math.max(0, 1 - (Math.abs(weatherData[crit.metric] - crit.ideal) / crit.tolerance));
+      totalScore += (metricScore * crit.weight);
+      totalWeight += crit.weight;
+    }
+  });
+  return totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0;
+}
 
 export function evaluateScoringPolicies(latestWeather) {
   if (!latestWeather) return;
@@ -11,16 +24,10 @@ export function evaluateScoringPolicies(latestWeather) {
 
   let htmlContent = "";
   userScoringPolicies.forEach(policy => {
-    let totalScore = 0, totalWeight = 0;
-    policy.criteria.forEach(crit => {
-      if (latestWeather[crit.metric] !== undefined) {
-        let metricScore = Math.max(0, 1 - (Math.abs(latestWeather[crit.metric] - crit.ideal) / crit.tolerance));
-        totalScore += (metricScore * crit.weight);
-        totalWeight += crit.weight;
-      }
-    });
-
-    const roundedScore = Math.round(totalWeight > 0 ? (totalScore / totalWeight) * 100 : 0);
+    // REFACTORED: Now it just calls the pure function
+    const rawScore = calculateSuitabilityScore(latestWeather, policy.criteria);
+    const roundedScore = Math.round(rawScore);
+    
     let barColor = roundedScore < 40 ? "#dc3545" : roundedScore < 75 ? "#ffc107" : "#28a745"; 
 
     htmlContent += `
