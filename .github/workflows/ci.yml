@@ -4,31 +4,44 @@ on:
   push:
     branches: [ main ]
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  # 1. THE CI JOB (Check the files)
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Inject API Key
-        run: echo 'export const API_KEY = "${{ secrets.OPENWEATHER_API_KEY}}";' > config.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-      - name: Upload artifact
+      - name: Install Dependencies & Run Tests
+        run: |
+          npm ci
+          npm test
+
+      - name: Inject API Key
+        run: printf 'export const API_KEY = "%s";\n' "${{ secrets.OPENWEATHER_API_KEY }}" > config.js
+
+      - name: Package Static Site
+        run: |
+          mkdir -p _site
+          cp index.html style.css api.js config.js firebase.js index.js logic_1.js logic_2.js logic_3.js ui.js _site/
+
+      - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.' # Uploads your entire repository folder
+          path: './_site'
 
-  # 2. THE CD JOB (Deploy the website live)
   deploy:
-    needs: build
+    needs: build-and-test
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -37,4 +50,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
