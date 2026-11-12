@@ -26,7 +26,7 @@ export function renderWeather(info) {
   datetime.innerHTML = convertTimeStamp(currentUtcSeconds, info.timezone);
   weather__forecast.innerHTML = `<p>${info.condition}</p>`;
   weather__temperature.innerHTML = `${Math.round(info.temp)}&#176`;
-  weather__icon.innerHTML = `<img src="http://openweathermap.org/img/wn/${info.icon}@4x.png" />`;
+  weather__icon.innerHTML = `<img src="https://openweathermap.org/img/wn/${info.icon}@4x.png" />`;
   weather__minmax.innerHTML = `<p>Min: ${Math.round(info.temp_min)}&#176</p><p>Max: ${Math.round(info.temp_max)}&#176</p>`;
   weather__realfeel.innerHTML = `${Math.round(info.feels_like)}&#176`;
   weather__humidity.innerHTML = `${info.humidity}%`;
@@ -47,7 +47,7 @@ export function renderForecast(forecastList) {
     forecastCards.innerHTML += `
       <div class="forecast-card">
         <p style="font-weight: bold;">${dayName}</p>
-        <img src="http://openweathermap.org/img/wn/${period.weather[0].icon}@2x.png" alt="icon">
+        <img src="https://openweathermap.org/img/wn/${period.weather[0].icon}@2x.png" alt="icon">
         <p style="font-size: 1.2rem; font-weight: 600;">${Math.round(period.main.temp)}°</p>
         <p style="font-size: 12px; color: #ccc;">${period.weather[0].main}</p>
       </div>

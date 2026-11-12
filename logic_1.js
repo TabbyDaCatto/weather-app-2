@@ -2,7 +2,7 @@
 let alertPolicies = JSON.parse(localStorage.getItem("alertPolicies")) || [];
 let getLatestWeatherRef = null;
 
-function checkCondition(cond, context) {
+export function checkCondition(cond, context) {
   const liveValue = context[cond.metric];
   if (liveValue === undefined) return false;
   switch (cond.operator) {

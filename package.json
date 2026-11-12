@@ -8,14 +8,14 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js"
   },
   "jest": {
     "testEnvironment": "jsdom"
   },
   "devDependencies": {
     "jest": "^30.5.0",
-    "jest-environment-jsdom": "^30.0.0"
+    "jest-environment-jsdom": "^30.5.2"
   },
   "repository": {
     "type": "git",
